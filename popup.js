@@ -174,16 +174,18 @@ function categorizeLocal(tabs) {
   const categories = {};
 
   const rules = [
-    { name: 'social', patterns: ['twitter.com', 'x.com', 'facebook.com', 'instagram.com', 'linkedin.com', 'reddit.com', 'tiktok.com', 'threads.net', 'mastodon', 'bsky.app'] },
-    { name: 'video', patterns: ['youtube.com', 'netflix.com', 'twitch.tv', 'vimeo.com', 'hulu.com', 'disneyplus.com', 'hbomax.com', 'primevideo.com'] },
-    { name: 'shopping', patterns: ['amazon.com', 'ebay.com', 'etsy.com', 'walmart.com', 'target.com', 'bestbuy.com', 'shopify.com', 'shop.'] },
-    { name: 'dev', patterns: ['github.com', 'gitlab.com', 'stackoverflow.com', 'npmjs.com', 'codepen.io', 'vercel.com', 'netlify.com', 'localhost', 'developer.', 'docs.'] },
+    { name: 'finance', patterns: ['coinbase.com', 'binance.com', 'robinhood.com', 'tradingview.com', 'opensea.io', 'etherscan.io', 'bankofamerica', 'chase.com', 'paypal.com', 'venmo.com', 'fidelity.com', 'schwab.com', 'vanguard.com', 'mint.com', 'creditkarma', 'wellsfargo', 'capitalone', 'sofi.com', 'webull.com', 'kraken.com', 'crypto.com', 'metamask.io', 'uniswap', 'dextools', 'coingecko.com', 'coinmarketcap.com', 'blockchain.com', 'phantom.app', 'jupiter.ag', 'raydium.io', 'solscan.io', 'debank.com', 'zapper.fi', 'aave.com', 'lido.fi', 'wealthfront', 'betterment', 'plaid.com', 'stripe.com', 'wise.com', 'revolut.com', 'crypto', 'swap', 'defi', 'token', 'wallet', 'finance', 'banking', 'invest', 'trading', 'stock', 'forex', 'etf'] },
+    { name: 'social', patterns: ['twitter.com', 'x.com', 'facebook.com', 'instagram.com', 'linkedin.com', 'reddit.com', 'tiktok.com', 'threads.net', 'mastodon', 'bsky.app', 'discord.com', 'snapchat.com'] },
+    { name: 'video', patterns: ['youtube.com', 'netflix.com', 'twitch.tv', 'vimeo.com', 'hulu.com', 'disneyplus.com', 'hbomax.com', 'primevideo.com', 'peacock', 'crunchyroll'] },
+    { name: 'shopping', patterns: ['amazon.com', 'ebay.com', 'etsy.com', 'walmart.com', 'target.com', 'bestbuy.com', 'shopify.com', 'shop.', 'nike.com', 'adidas.com', 'zara.com', 'grailed.com', 'stockx.com'] },
+    { name: 'dev', patterns: ['github.com', 'gitlab.com', 'stackoverflow.com', 'npmjs.com', 'codepen.io', 'vercel.com', 'netlify.com', 'localhost', 'developer.', 'docs.', 'replit.com', 'codesandbox'] },
     { name: 'email', patterns: ['mail.google', 'outlook.', 'mail.yahoo', 'protonmail', 'fastmail'] },
-    { name: 'docs', patterns: ['docs.google', 'notion.so', 'drive.google', 'sheets.google', 'slides.google', 'dropbox.com', 'airtable.com', 'figma.com'] },
-    { name: 'news', patterns: ['cnn.com', 'bbc.com', 'nytimes.com', 'reuters.com', 'techcrunch.com', 'theverge.com', 'arstechnica.com', 'news.ycombinator'] },
-    { name: 'finance', patterns: ['coinbase.com', 'binance.com', 'robinhood.com', 'tradingview.com', 'opensea.io', 'etherscan.io', 'bankofamerica', 'chase.com', 'paypal.com', 'venmo.com'] },
+    { name: 'docs', patterns: ['docs.google', 'notion.so', 'drive.google', 'sheets.google', 'slides.google', 'dropbox.com', 'airtable.com', 'figma.com', 'canva.com', 'miro.com'] },
+    { name: 'news', patterns: ['cnn.com', 'bbc.com', 'nytimes.com', 'reuters.com', 'techcrunch.com', 'theverge.com', 'arstechnica.com', 'news.ycombinator', 'bloomberg.com', 'cnbc.com', 'wsj.com', 'ft.com', 'marketwatch'] },
     { name: 'music', patterns: ['spotify.com', 'soundcloud.com', 'music.apple', 'music.youtube', 'bandcamp.com', 'tidal.com'] },
-    { name: 'ai', patterns: ['chat.openai', 'claude.ai', 'bard.google', 'midjourney', 'perplexity.ai', 'huggingface.co', 'anthropic.com'] },
+    { name: 'ai', patterns: ['chat.openai', 'claude.ai', 'bard.google', 'midjourney', 'perplexity.ai', 'huggingface.co', 'anthropic.com', 'poe.com', 'character.ai'] },
+    { name: 'travel', patterns: ['airbnb.com', 'booking.com', 'expedia.com', 'kayak.com', 'google.com/travel', 'hotels.com', 'tripadvisor', 'skyscanner', 'united.com', 'delta.com', 'southwest.com'] },
+    { name: 'food', patterns: ['doordash.com', 'ubereats.com', 'grubhub.com', 'seamless.com', 'yelp.com', 'opentable.com', 'resy.com', 'caviar.com'] },
   ];
 
   const other = [];

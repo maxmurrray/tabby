@@ -4,6 +4,10 @@
   "description": "A friendly cat that organizes your browser tabs. Auto-groups by topic, removes duplicates, keeps things tidy. 🐱",
   "version": "1.0.0",
   "permissions": ["tabs", "tabGroups", "storage"],
+  "host_permissions": ["https://api.anthropic.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

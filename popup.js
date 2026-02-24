@@ -131,38 +131,20 @@ async function organize() {
   }
 }
 
-// ── AI Categorization (Anthropic Claude) ──
+// ── AI Categorization (Anthropic Claude via background worker) ──
 async function categorizeWithAI(tabs, apiKey) {
   const tabData = tabs.map(t => ({ id: t.id, title: t.title, url: new URL(t.url).hostname + new URL(t.url).pathname.slice(0, 50) }));
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-3-5-20241022',
-      max_tokens: 1000,
-      system: 'You organize browser tabs into groups. Given a list of tabs with id, title, and url, return a JSON object where keys are short group names (1-2 words, lowercase) and values are arrays of tab ids. Use 3-7 groups max. Be smart about grouping — by topic, not by website. Return ONLY valid JSON, no markdown.',
-      messages: [{
-        role: 'user',
-        content: JSON.stringify(tabData)
-      }]
-    })
+  const result = await chrome.runtime.sendMessage({
+    type: 'anthropic',
+    apiKey,
+    system: 'You organize browser tabs into groups. Given a list of tabs with id, title, and url, return a JSON object where keys are short group names (1-2 words, lowercase) and values are arrays of tab ids. Use 3-7 groups max. Be smart about grouping — by topic, not by website. Return ONLY valid JSON, no markdown.',
+    content: JSON.stringify(tabData)
   });
 
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error?.message || 'API error');
-  }
+  if (result.error) throw new Error(result.error);
 
-  const data = await response.json();
-  let content = data.content[0].text.trim();
-
-  // Strip markdown code fences if present
+  let content = result.text.trim();
   content = content.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
 
   return JSON.parse(content);

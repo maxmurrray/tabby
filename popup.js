@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('organizeBtn').addEventListener('click', organize);
   document.getElementById('closeDupes').addEventListener('click', closeDuplicates);
+  document.getElementById('ungroupBtn').addEventListener('click', ungroupAll);
   document.getElementById('settingsBtn').addEventListener('click', toggleSettings);
   document.getElementById('saveKey').addEventListener('click', saveApiKey);
 
@@ -208,6 +209,26 @@ function categorizeLocal(tabs) {
   }
 
   return categories;
+}
+
+// ── Ungroup all tabs ──
+async function ungroupAll() {
+  const tabs = await chrome.tabs.query({ currentWindow: true });
+  const groupedTabs = tabs.filter(t => t.groupId !== -1);
+
+  if (groupedTabs.length === 0) {
+    showStatus('No groups to undo 😸');
+    return;
+  }
+
+  for (const tab of groupedTabs) {
+    await chrome.tabs.ungroup(tab.id);
+  }
+
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('groupCount').textContent = '0';
+  showStatus(`Ungrouped ${groupedTabs.length} tabs — back to normal 🐾`);
 }
 
 // ── Helpers ──

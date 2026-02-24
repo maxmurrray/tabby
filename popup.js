@@ -88,11 +88,22 @@ async function organize() {
 
     // Try AI categorization, fall back to smart local
     let categories;
-    const { anthropic_key } = await chrome.storage.local.get('anthropic_key');
+    const storage = await chrome.storage.local.get('anthropic_key');
+    const anthropic_key = storage.anthropic_key;
+    console.log('[Tabby] API key present:', !!anthropic_key, 'key starts with:', anthropic_key ? anthropic_key.slice(0, 10) + '...' : 'none');
 
-    if (anthropic_key) {
-      categories = await categorizeWithAI(ungrouped, anthropic_key);
+    if (anthropic_key && anthropic_key.length > 10) {
+      console.log('[Tabby] Using AI categorization');
+      try {
+        categories = await categorizeWithAI(ungrouped, anthropic_key);
+        console.log('[Tabby] AI result:', categories);
+      } catch (aiErr) {
+        console.error('[Tabby] AI failed, falling back to local:', aiErr);
+        showStatus('AI failed: ' + aiErr.message + ' — using local mode', true);
+        categories = categorizeLocal(ungrouped);
+      }
     } else {
+      console.log('[Tabby] No API key, using local categorization');
       categories = categorizeLocal(ungrouped);
     }
 
@@ -236,7 +247,16 @@ function toggleSettings() {
 
 function saveApiKey() {
   const key = document.getElementById('apiKey').value.trim();
+  console.log('[Tabby] Saving key, length:', key.length, 'starts with:', key.slice(0, 10));
   chrome.storage.local.set({ anthropic_key: key }, () => {
-    showStatus(key ? 'API key saved 🔑' : 'API key cleared');
+    if (chrome.runtime.lastError) {
+      showStatus('Error saving: ' + chrome.runtime.lastError.message, true);
+      return;
+    }
+    // Verify it saved
+    chrome.storage.local.get('anthropic_key', (data) => {
+      console.log('[Tabby] Verified saved key length:', data.anthropic_key?.length);
+      showStatus(key ? `API key saved 🔑 (${key.length} chars)` : 'API key cleared');
+    });
   });
 }

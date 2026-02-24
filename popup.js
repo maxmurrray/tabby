@@ -17,9 +17,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('saveKey').addEventListener('click', saveApiKey);
 
   // Load saved key
-  chrome.storage.local.get('openai_key', (data) => {
-    if (data.openai_key) {
-      document.getElementById('apiKey').value = data.openai_key;
+  chrome.storage.local.get('anthropic_key', (data) => {
+    if (data.anthropic_key) {
+      document.getElementById('apiKey').value = data.anthropic_key;
     }
   });
 });
@@ -88,10 +88,10 @@ async function organize() {
 
     // Try AI categorization, fall back to smart local
     let categories;
-    const { openai_key } = await chrome.storage.local.get('openai_key');
+    const { anthropic_key } = await chrome.storage.local.get('anthropic_key');
 
-    if (openai_key) {
-      categories = await categorizeWithAI(ungrouped, openai_key);
+    if (anthropic_key) {
+      categories = await categorizeWithAI(ungrouped, anthropic_key);
     } else {
       categories = categorizeLocal(ungrouped);
     }
@@ -131,27 +131,26 @@ async function organize() {
   }
 }
 
-// ── AI Categorization (OpenAI) ──
+// ── AI Categorization (Anthropic Claude) ──
 async function categorizeWithAI(tabs, apiKey) {
   const tabData = tabs.map(t => ({ id: t.id, title: t.title, url: new URL(t.url).hostname + new URL(t.url).pathname.slice(0, 50) }));
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
     },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
+      model: 'claude-haiku-3-5-20241022',
+      max_tokens: 1000,
+      system: 'You organize browser tabs into groups. Given a list of tabs with id, title, and url, return a JSON object where keys are short group names (1-2 words, lowercase) and values are arrays of tab ids. Use 3-7 groups max. Be smart about grouping — by topic, not by website. Return ONLY valid JSON, no markdown.',
       messages: [{
-        role: 'system',
-        content: 'You organize browser tabs into groups. Given a list of tabs with id, title, and url, return a JSON object where keys are short group names (1-2 words, lowercase) and values are arrays of tab ids. Use 3-7 groups max. Be smart about grouping — by topic, not by website. Return ONLY valid JSON, no markdown.'
-      }, {
         role: 'user',
         content: JSON.stringify(tabData)
-      }],
-      temperature: 0.3,
-      max_tokens: 1000
+      }]
     })
   });
 
@@ -161,7 +160,7 @@ async function categorizeWithAI(tabs, apiKey) {
   }
 
   const data = await response.json();
-  let content = data.choices[0].message.content.trim();
+  let content = data.content[0].text.trim();
 
   // Strip markdown code fences if present
   content = content.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
@@ -255,7 +254,7 @@ function toggleSettings() {
 
 function saveApiKey() {
   const key = document.getElementById('apiKey').value.trim();
-  chrome.storage.local.set({ openai_key: key }, () => {
+  chrome.storage.local.set({ anthropic_key: key }, () => {
     showStatus(key ? 'API key saved 🔑' : 'API key cleared');
   });
 }

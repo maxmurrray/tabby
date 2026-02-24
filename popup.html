@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 320px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      overflow: hidden;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 18px 8px;
+    }
+
+    .header img {
+      width: 36px;
+      height: 36px;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .header h1 span {
+      color: #f9a826;
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      padding: 8px 18px 14px;
+    }
+
+    .stat {
+      background: #16213e;
+      border-radius: 10px;
+      padding: 10px 14px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 22px;
+      font-weight: 700;
+      color: #f9a826;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .actions {
+      padding: 0 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: #f9a826;
+      color: #1a1a2e;
+    }
+
+    .btn-primary:hover {
+      background: #fbb740;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #16213e;
+      color: #ccc;
+    }
+
+    .btn-secondary:hover {
+      background: #1a2745;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn .emoji {
+      font-size: 16px;
+    }
+
+    /* Results panel */
+    .results {
+      display: none;
+      padding: 4px 18px 14px;
+    }
+
+    .results.show {
+      display: block;
+    }
+
+    .result-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #16213e;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .result-item .group-color {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .result-item .group-name {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .result-item .group-count {
+      color: #888;
+      font-size: 12px;
+    }
+
+    .duplicates-banner {
+      display: none;
+      padding: 10px 14px;
+      margin: 0 18px 10px;
+      background: #2d1b3d;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #d4a0d0;
+    }
+
+    .duplicates-banner.show {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .duplicates-banner button {
+      background: none;
+      border: 1px solid #d4a0d0;
+      color: #d4a0d0;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .duplicates-banner button:hover {
+      background: #d4a0d044;
+    }
+
+    /* Settings */
+    .settings {
+      display: none;
+      padding: 4px 18px 14px;
+    }
+
+    .settings.show {
+      display: block;
+    }
+
+    .settings label {
+      font-size: 12px;
+      color: #888;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .settings input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background: #16213e;
+      color: #eee;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .settings input:focus {
+      outline: none;
+      border-color: #f9a826;
+    }
+
+    .settings .save-key {
+      font-size: 12px;
+      padding: 8px 14px;
+    }
+
+    .footer {
+      padding: 10px 18px;
+      text-align: center;
+      font-size: 11px;
+      color: #555;
+      border-top: 1px solid #222;
+    }
+
+    /* Status message */
+    .status {
+      display: none;
+      padding: 8px 18px;
+      font-size: 13px;
+      text-align: center;
+      color: #4ade80;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.error {
+      color: #f87171;
+    }
+
+    /* Spinning animation for the cat */
+    .organizing .header img {
+      animation: catSpin 0.6s ease infinite;
+    }
+
+    @keyframes catSpin {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-10deg); }
+      75% { transform: rotate(10deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icons/tabby-48.png" alt="Tabby">
+    <h1>Tab<span>by</span></h1>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="tabCount">-</div>
+      <div class="stat-label">Open Tabs</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="dupeCount">-</div>
+      <div class="stat-label">Duplicates</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="groupCount">-</div>
+      <div class="stat-label">Groups</div>
+    </div>
+  </div>
+
+  <div class="duplicates-banner" id="dupeBanner">
+    <span>🐱 Found <strong id="dupeNum">0</strong> duplicate tabs</span>
+    <button id="closeDupes">Close extras</button>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="organizeBtn">
+      <span class="emoji">🐱</span> Organize My Tabs
+    </button>
+    <button class="btn btn-secondary" id="settingsBtn">
+      <span class="emoji">⚙️</span> Settings
+    </button>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="results" id="results"></div>
+
+  <div class="settings" id="settingsPanel">
+    <label for="apiKey">OpenAI API Key</label>
+    <input type="password" id="apiKey" placeholder="sk-...">
+    <button class="btn btn-secondary save-key" id="saveKey">Save Key</button>
+  </div>
+
+  <div class="footer">Tabby v1.0 — your tabs, tidied 🐾</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

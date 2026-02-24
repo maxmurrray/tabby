@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Tabby – Tab Organizer",
+  "description": "A friendly cat that organizes your browser tabs. Auto-groups by topic, removes duplicates, keeps things tidy. 🐱",
+  "version": "1.0.0",
+  "permissions": ["tabs", "tabGroups", "storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/tabby-16.png",
+      "48": "icons/tabby-48.png",
+      "128": "icons/tabby-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/tabby-16.png",
+    "48": "icons/tabby-48.png",
+    "128": "icons/tabby-128.png"
+  }
+}
